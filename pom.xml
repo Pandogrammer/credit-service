@@ -29,12 +29,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--libreria de afip que podria servir-->
-		<!--<dependency>
+<!--		libreria de afip que podria servir		-->
+		<dependency>
 			<groupId>io.github.nibiruos.afip</groupId>
 			<artifactId>ar.com.system.afip</artifactId>
 			<version>1.1.0</version>
-		</dependency>-->
+		</dependency>
 
 	</dependencies>
 
