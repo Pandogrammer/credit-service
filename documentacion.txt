@@ -1,5 +1,6 @@
 + AFIP - WSAA - AUTENTICACION
 http://www.afip.gov.ar/ws/WSAA/Especificacion_Tecnica_WSAA_1.2.0.pdf
+https://wsaa.afip.gov.ar/ws/services/LoginCms?wsdl
 
 + AFIP - WSFECRED
 http://www.afip.gob.ar/facturadecreditoelectronica/documentos/Manual_Desarrollador_WSFECRED_v3.pdf

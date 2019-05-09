@@ -1,18 +1,26 @@
 package com.watea.creditservice;
 
+import java.io.Serializable;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+
+import javax.annotation.Nullable;
 
 import org.junit.Test;
 
 import ar.com.system.afip.wsaa.business.api.Service;
 import ar.com.system.afip.wsaa.business.api.XmlConverter;
 import ar.com.system.afip.wsaa.business.impl.BouncyCastleWsaaManager;
+import ar.com.system.afip.wsaa.data.api.CompanyInfo;
 import ar.com.system.afip.wsaa.data.api.SetupDao;
+import ar.com.system.afip.wsaa.data.api.TaxCategory;
 import ar.com.system.afip.wsaa.data.api.WsaaDao;
 import ar.com.system.afip.wsaa.data.impl.HomoSetupDao;
-import ar.com.system.afip.wsaa.service.api.LoginCMS;
+import ar.com.system.afip.wsaa.data.impl.InMemoryWsaaDao;
+import https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginCMS;
+import https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginCMSService;
 
 public class AfipLoginTest {
 
@@ -25,7 +33,7 @@ public class AfipLoginTest {
 
 	@Test
 	public void loginTicketRequestXML() {
-		generateXML()
+//		generateXML()
 	}
 
 	@Test
@@ -37,12 +45,69 @@ public class AfipLoginTest {
 	@Test
 	public void algoQuePuedeServir() {
 		SetupDao setupDao = new HomoSetupDao(Service.WSFE);
-		WsaaDao wsaaDao;
-		LoginCMS loginCms;
-		XmlConverter xmlConverter;
+		WsaaDao daoWsaa = new InMemoryWsaaDao();
+		LoginCMS loginCms = new LoginCMSService().getLoginCms();
+		XmlConverter xmlConverter = getXmlConverter();
 
-		BouncyCastleWsaaManager wsaaManager = new BouncyCastleWsaaManager(
-				wsaaDao, setupDao, loginCms, xmlConverter);
+		WsaaManager wsaaManager = new WsaaManager(daoWsaa, setupDao, loginCms, xmlConverter);
+
+		daoWsaa.saveCompanyInfo(getCompanyInfo());
+
+		wsaaManager.initializeKeys();
+		wsaaManager.updateCertificate(getCertificate());
+		wsaaManager.login(Service.WSFE);
+
+	}
+
+	private CompanyInfo getCompanyInfo() {
+		Serializable id = 1;
+		String name = "Watea";
+		boolean active = true;
+		String unit = "";
+		String cuit = "20239686673";
+		String publicKey = null; //null
+		String privateKey = null; //null
+		String certificate = null; //null
+		String grossIncome = "";
+		Date activityStartDate = new Date();
+		TaxCategory taxCategory = TaxCategory.RESPONSABLE_INSCRIPTO;
+		String address = null; //null
+		String location = null; //null
+		String alias = "Watea";
+		return new CompanyInfo(id, name, active, unit, cuit, publicKey, privateKey,
+				certificate, grossIncome, activityStartDate, taxCategory, address, location, alias);
+	}
+
+	private String getCertificate() {
+		return "-----BEGIN CERTIFICATE-----\n" + "MIIDSzCCAjOgAwIBAgIIZIPy3wtgW0cwDQYJKoZIhvcNAQENBQAwODEaMBgGA1UEAwwRQ29tcHV0\n"
+				+ "YWRvcmVzIFRlc3QxDTALBgNVBAoMBEFGSVAxCzAJBgNVBAYTAkFSMB4XDTE5MDUwNzExNTM0NVoX\n"
+				+ "DTIxMDUwNjExNTM0NVowMTEUMBIGA1UEAwwLV2F0ZWFGRUNSRUQxGTAXBgNVBAUTEENVSVQgMjAy\n"
+				+ "Mzk2ODY2NzMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCtfrFC/4YOkO1W6vYeCs1C\n"
+				+ "PfIwntm0opCkxI8/MfDZ9JxZ3UE1AvRQ+cqBBhHWzRFTvY2IIxunTPtryqiTvcrrTQ9+GQYbJdOB\n"
+				+ "+kiWqhIE2dLNbgTwh4Coi1lGAjVPmaJjpEiUI0IAK3ptlTCOpL9kfzFFJVLI1nDaUCKjSbJn/ykF\n"
+				+ "lKttfFcF8MD09/URASYQpEyC82m2M+2C7d1xsHUkg8W/ado8yMASTmHQ75BG4ygSp0IDFPWoqDJr\n"
+				+ "WNph7Xy6XKCGGfjk4rlAUfoEZEw+UFONulLFtyMVj2oXxqfRIptU2lY0uD7XvtPqMXFWHToBfH18\n"
+				+ "tYZ9cxHY6KiqYbg7AgMBAAGjYDBeMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUs7LT//3put7e\n"
+				+ "ja8RIZzWIH3yT28wHQYDVR0OBBYEFIYD3UGXXOqHHahk6/jEuO2FqQRzMA4GA1UdDwEB/wQEAwIF\n"
+				+ "4DANBgkqhkiG9w0BAQ0FAAOCAQEAMpLJYybrM1iA5dxKN4z4cJR7jiFm8P0Y0Ya31xjJnXYmWueZ\n"
+				+ "qtjris1mLRFkSF677c5azNfzRM/YXGmF7d1KbKnNFFAkUGvJ6UVWwL9xdLanu4A1/ZXOVaqzwyEm\n"
+				+ "aYc9WI9bJ9owMj87GNAz6/z0q/kan97yLC6UwwKeNJWmk5U2iZ6VJ7SHgxiIjRI1WTxVkq8Apvfl\n"
+				+ "NZsguyQ8/UePKpkgk97fpjEoEITv1Kw5BObuMCOK7qxXlE2fuIEWPjcVOLelwMw3/qNQSqLPJi7h\n"
+				+ "5ju1MweBMPIPKE+3H6RtvEbsdvpB0Xu0+Y4Zq1NJ8DlIp80zMiectjl7dKA/74NQsA==\n" + "-----END CERTIFICATE-----";
+	}
+
+	private XmlConverter getXmlConverter() {
+		return new XmlConverter() {
+			@Override
+			public String toXml(Object data) {
+				return exampleXml;
+			}
+
+			@Override
+			public <T> T fromXml(Class<T> clazz, String data) {
+				return null;
+			}
+		};
 	}
 
 	private static KeyPair buildKeys() {
@@ -55,4 +120,6 @@ public class AfipLoginTest {
 			return null;
 		}
 	}
+
+
 }
