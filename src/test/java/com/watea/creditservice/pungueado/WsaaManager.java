@@ -1,4 +1,4 @@
-package com.watea.creditservice;
+package com.watea.creditservice.pungueado;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -31,16 +31,13 @@ import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 
 import com.google.common.base.Throwables;
 
-import ar.com.system.afip.wsaa.business.api.Service;
 import ar.com.system.afip.wsaa.business.api.XmlConverter;
-import ar.com.system.afip.wsaa.business.impl.LoginTicketRequest;
 import ar.com.system.afip.wsaa.business.impl.LoginTicketResponse;
 import ar.com.system.afip.wsaa.data.api.CompanyInfo;
-import ar.com.system.afip.wsaa.data.api.SetupDao;
 import ar.com.system.afip.wsaa.data.api.WsaaDao;
 import ar.com.system.afip.wsaa.service.api.Credentials;
-import https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginCMS;
-import https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginFault_Exception;
+import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMS;
+import https.wsaa_afip_gov_ar.ws.services.logincms.LoginFault_Exception;
 
 public class WsaaManager {
 	static final String SIGNING_ALGORITHM = "SHA512withRSA";
@@ -166,6 +163,7 @@ public class WsaaManager {
 					.toCms(certificate, privKey)
 					.toString();
 
+			System.out.println(cms);
 			String loginTicketResponseXml = loginCms.loginCms(cms);
 
 			LoginTicketResponse response = xmlConverter

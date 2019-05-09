@@ -6,21 +6,21 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
-import javax.annotation.Nullable;
-
 import org.junit.Test;
 
-import ar.com.system.afip.wsaa.business.api.Service;
+import com.watea.creditservice.pungueado.HomoSetupDao;
+import com.watea.creditservice.pungueado.ProductionSetupDao;
+import com.watea.creditservice.pungueado.Service;
+import com.watea.creditservice.pungueado.SetupDao;
+import com.watea.creditservice.pungueado.WsaaManager;
+
 import ar.com.system.afip.wsaa.business.api.XmlConverter;
-import ar.com.system.afip.wsaa.business.impl.BouncyCastleWsaaManager;
 import ar.com.system.afip.wsaa.data.api.CompanyInfo;
-import ar.com.system.afip.wsaa.data.api.SetupDao;
 import ar.com.system.afip.wsaa.data.api.TaxCategory;
 import ar.com.system.afip.wsaa.data.api.WsaaDao;
-import ar.com.system.afip.wsaa.data.impl.HomoSetupDao;
 import ar.com.system.afip.wsaa.data.impl.InMemoryWsaaDao;
-import https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginCMS;
-import https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginCMSService;
+import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMS;
+import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMSService;
 
 public class AfipLoginTest {
 
@@ -44,7 +44,7 @@ public class AfipLoginTest {
 
 	@Test
 	public void algoQuePuedeServir() {
-		SetupDao setupDao = new HomoSetupDao(Service.WSFE);
+		SetupDao setupDao = new ProductionSetupDao(Service.WSFECRED);
 		WsaaDao daoWsaa = new InMemoryWsaaDao();
 		LoginCMS loginCms = new LoginCMSService().getLoginCms();
 		XmlConverter xmlConverter = getXmlConverter();
@@ -55,7 +55,7 @@ public class AfipLoginTest {
 
 		wsaaManager.initializeKeys();
 		wsaaManager.updateCertificate(getCertificate());
-		wsaaManager.login(Service.WSFE);
+		wsaaManager.login(Service.WSFECRED);
 
 	}
 
