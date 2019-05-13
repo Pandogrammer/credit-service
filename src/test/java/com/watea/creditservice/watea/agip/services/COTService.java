@@ -5,8 +5,6 @@
  */
 package com.watea.creditservice.watea.agip.services;
 
-import ar.com.watea.agip.entities.TBCOMPROBANTE;
-import ar.com.watea.agip.entities.TBError;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,10 +20,14 @@ import java.net.URLConnection;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.logging.Logger;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import com.watea.creditservice.watea.agip.entities.TBCOMPROBANTE;
+import com.watea.creditservice.watea.agip.entities.TBError;
 
 /**
  *
