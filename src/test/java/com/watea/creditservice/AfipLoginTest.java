@@ -13,6 +13,7 @@ import com.watea.creditservice.pungueado.ProductionSetupDao;
 import com.watea.creditservice.pungueado.Service;
 import com.watea.creditservice.pungueado.SetupDao;
 import com.watea.creditservice.pungueado.WsaaManager;
+import com.watea.creditservice.watea.agip.WSLoginManager;
 
 import ar.com.system.afip.wsaa.business.api.XmlConverter;
 import ar.com.system.afip.wsaa.data.api.CompanyInfo;
@@ -43,7 +44,7 @@ public class AfipLoginTest {
 	}
 
 	@Test
-	public void algoQuePuedeServir() {
+	public void loginLibreriaExterna() {
 		SetupDao setupDao = new ProductionSetupDao(Service.WSFECRED);
 		WsaaDao daoWsaa = new InMemoryWsaaDao();
 		LoginCMS loginCms = new LoginCMSService().getLoginCms();
@@ -57,6 +58,22 @@ public class AfipLoginTest {
 		wsaaManager.updateCertificate(getCertificate());
 		wsaaManager.login(Service.WSFECRED);
 
+	}
+
+	@Test
+	public void loginWatea(){
+		try {
+			String certPath = "/Users/Fernando/fer/credit-service/src/test/resources/watea.crt";
+			String certPass = "/Users/Fernando/fer/credit-service/src/test/resources/watea.priv";
+			String cuit = "1234";
+			String destination = "wsfecred";
+			WSLoginManager loginManager = new WSLoginManager(certPath, certPass, cuit, destination);
+
+			String service = "wsfecred";
+			loginManager.getCredential(service);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private CompanyInfo getCompanyInfo() {
@@ -77,6 +94,8 @@ public class AfipLoginTest {
 		return new CompanyInfo(id, name, active, unit, cuit, publicKey, privateKey,
 				certificate, grossIncome, activityStartDate, taxCategory, address, location, alias);
 	}
+
+
 
 	private String getCertificate() {
 		return "-----BEGIN CERTIFICATE-----\n" + "MIIDSzCCAjOgAwIBAgIIZIPy3wtgW0cwDQYJKoZIhvcNAQENBQAwODEaMBgGA1UEAwwRQ29tcHV0\n"
