@@ -53,7 +53,8 @@ public class WSLoginManager // extends Thread
             this.dataGenerators = new Hashtable<String, CMSDataGenerator>();
             this.activeCredentials = new Hashtable<String, Credential>();
 
-            this.ambiente = COTRequestProcess.getProperties().getProperty("ambiente");
+            //this.ambiente = COTRequestProcess.getProperties().getProperty("ambiente");
+            this.ambiente = "PROD";
 
             log.exiting(this.getClass().getName(), "Constructor");
         } catch (Exception e) {
