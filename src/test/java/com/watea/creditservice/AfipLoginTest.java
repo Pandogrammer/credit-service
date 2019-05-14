@@ -25,6 +25,7 @@ import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMSService;
 
 public class AfipLoginTest {
 
+	String basePath;
 	private String exampleXml = "<?xml version=\"1.0\" encoding=\"UTF\u00AD8\"?>" + "<loginTicketRequest version=\"1.0\">  " + "<header>"
 			+ "<source>cn=srv1,ou=facturacion,o=empresa s.a.,c=ar,serialNumber=CUIT 30123456789</source>"
 			+ "<destination>cn=wsaa,o=afip,c=ar,serialNumber=CUIT 33693450239</destination>" + "<uniqueId>4325399</uniqueId>    "
@@ -62,10 +63,7 @@ public class AfipLoginTest {
 
 	@Test
 	public void loginWatea(){
-		String basePath = "/Users/Fernando/fer/credit-service/src/test/resources/test/";
-		boolean casa = false;
-		if(casa)
-			basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\test\\";
+		setBasePathDesdeCasa(false);
 
 		try {
 			String certPath = basePath + "salentein-test.crt";
@@ -79,6 +77,11 @@ public class AfipLoginTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void setBasePathDesdeCasa(boolean desdeCasa) {
+		if(desdeCasa) basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\test\\";
+		else basePath = "/Users/Fernando/fer/credit-service/src/test/resources/test/";
 	}
 
 	private CompanyInfo getCompanyInfo() {
