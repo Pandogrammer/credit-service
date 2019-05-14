@@ -62,9 +62,14 @@ public class AfipLoginTest {
 
 	@Test
 	public void loginWatea(){
+		String basePath = "/Users/Fernando/fer/credit-service/src/test/resources/test/";
+		boolean casa = false;
+		if(casa)
+			basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\test\\";
+
 		try {
-			String certPath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\test\\salentein-test.crt";
-			String certPass = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\test\\salentein-test.der";
+			String certPath = basePath + "salentein-test.crt";
+			String certPass = basePath + "salentein-test.der";
 			String cuit = "1234";
 			String destination = "wsfecred";
 			WSLoginManager loginManager = new WSLoginManager(certPath, certPass, cuit, destination);
