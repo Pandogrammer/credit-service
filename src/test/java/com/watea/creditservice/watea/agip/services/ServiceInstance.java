@@ -5,22 +5,20 @@
  */
 package com.watea.creditservice.watea.agip.services;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.jms.*;
-
 import com.watea.creditservice.watea.agip.AGIPService;
 import com.watea.creditservice.watea.agip.controller.ArbaConnectionController;
 import com.watea.creditservice.watea.agip.controller.XxwCotJpaController;
 import com.watea.creditservice.watea.agip.entities.TBCOMPROBANTE;
 import com.watea.creditservice.watea.agip.entities.XxwCot;
-
 import oracle.jms.AQjmsQueueConnectionFactory;
 import oracle.jms.AQjmsSession;
+
+import javax.jms.*;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServiceInstance implements Runnable {
 
