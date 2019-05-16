@@ -8,7 +8,6 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import com.watea.creditservice.pungueado.HomoSetupDao;
 import com.watea.creditservice.pungueado.ProductionSetupDao;
 import com.watea.creditservice.pungueado.Service;
 import com.watea.creditservice.pungueado.SetupDao;
@@ -63,11 +62,13 @@ public class AfipLoginTest {
 
 	@Test
 	public void loginWatea(){
-		setBasePathDesdeCasa(true);
+		setBasePathDesdeCasa(false);
 
 		try {
-			String certPath = basePath + "salentein-test.crt";
-			String certPass = basePath + "salentein-test.der";
+			//el "crt" es un DER
+			String certPath = basePath + "watea.der";
+			//y el "der" (la key) no es un DER
+			String certPass = basePath + "watea.pub";
 			String cuit = "1234";
 			String destination = "wsfecred";
 			WSLoginManager loginManager = new WSLoginManager(certPath, certPass, cuit, destination);
@@ -80,8 +81,8 @@ public class AfipLoginTest {
 	}
 
 	private void setBasePathDesdeCasa(boolean desdeCasa) {
-		if(desdeCasa) basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\test\\";
-		else basePath = "/Users/Fernando/fer/credit-service/src/test/resources/test/";
+		if(desdeCasa) basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\";
+		else basePath = "/Users/Fernando/fer/credit-service/src/test/resources/";
 	}
 
 	private CompanyInfo getCompanyInfo() {

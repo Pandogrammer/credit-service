@@ -20,3 +20,5 @@ https://github.com/NibiruOS/afip
 + Cosas SSL
 https://www.sslshopper.com/article-most-common-openssl-commands.html
 https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
+
+https://stackoverflow.com/questions/5244129/use-rsa-private-key-to-generate-public-key
