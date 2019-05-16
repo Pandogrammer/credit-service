@@ -63,7 +63,7 @@ public class AfipLoginTest {
 
 	@Test
 	public void loginWatea(){
-		setBasePathDesdeCasa(false);
+		setBasePathDesdeCasa(true);
 
 		try {
 			String certPath = basePath + "salentein-test.crt";

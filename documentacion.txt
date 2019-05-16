@@ -15,3 +15,8 @@ https://github.com/NibiruOS/afip
 + Comandos para windows
 & "C:\Program Files\Java\jdk1.8.0_201\bin\wsimport.exe" https://hml.agip.gob.ar/claveciudad/webservice/LoginWS?wsdl
 & "C:\Program Files\Java\jdk1.8.0_201\bin\jar.exe" -cvf agip.jar *
+
+
++ Cosas SSL
+https://www.sslshopper.com/article-most-common-openssl-commands.html
+https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
