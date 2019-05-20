@@ -132,6 +132,7 @@ public class WSLoginManager // extends Thread
 
     private LoginTicketResponse getLoginTicketFromCMS(String cms) throws Exception {
 
+        System.out.println(cms);
         switch (ambiente) {
 
             case "PROD" : {

@@ -22,3 +22,21 @@ https://www.sslshopper.com/article-most-common-openssl-commands.html
 https://support.ssl.com/Knowledgebase/Article/View/19/0/der-vs-crt-vs-cer-vs-pem-certificates-and-how-to-convert-them
 
 https://stackoverflow.com/questions/5244129/use-rsa-private-key-to-generate-public-key
+
+https://connect2id.com/blog/importing-ca-root-cert-into-jvm-trust-store
+sudo keytool -importcert -alias COMODOSecureServerCA -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -file COMODORSAOrganizationValidationSecureServerCA.der
+
+
++ Generacion de certificado y clave
+openssl genrsa -out watea.key 2048
+
+openssl pkcs8 -topk8 -inform PEM -outform DER -in watea.key -out watea.der -nocrypt
+
+openssl req -new -key watea.key -subj "/C=AR/O=Watea/CN=Watea/serialNumber=30710037767 20239686673 30710037767" -out watea.csr
+
+si el certificado vuelve PEM pasarlo a DER
+	openssl x509 -in cert.crt -outform der -out cert.der
+
+watea:
+	30710037767
+	JJ: 20239686673

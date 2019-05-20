@@ -68,8 +68,8 @@ public class AfipLoginTest {
 			//el "crt" es un DER
 			String certPath = basePath + "watea.der";
 			//y el "der" (la key) no es un DER
-			String certPass = basePath + "watea.pub";
-			String cuit = "1234";
+			String certPass = basePath + "watea-key.der";
+			String cuit = "30710037767";
 			String destination = "wsfecred";
 			WSLoginManager loginManager = new WSLoginManager(certPath, certPass, cuit, destination);
 
@@ -81,8 +81,8 @@ public class AfipLoginTest {
 	}
 
 	private void setBasePathDesdeCasa(boolean desdeCasa) {
-		if(desdeCasa) basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\";
-		else basePath = "/Users/Fernando/fer/credit-service/src/test/resources/";
+		if(desdeCasa) basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\old-certificates\\resources\\";
+		else basePath = "/Users/Fernando/fer/credit-service/src/old-certificates/resources/";
 	}
 
 	private CompanyInfo getCompanyInfo() {
