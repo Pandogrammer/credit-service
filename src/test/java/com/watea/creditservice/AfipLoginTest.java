@@ -70,9 +70,8 @@ public class AfipLoginTest {
 			//y el "der" (la key) no es un DER
 			String certPass = basePath + "watea-key.der";
 			String cuit = "30710037767";
-			String destination = "wsfecred";
+			String destination = "CN=wsaa, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239";
 			WSLoginManager loginManager = new WSLoginManager(certPath, certPass, cuit, destination);
-
 			String service = "wsfecred";
 			loginManager.getCredential(service);
 		} catch (Exception e) {
