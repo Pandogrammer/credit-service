@@ -6,12 +6,14 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.junit.Test;
 
 import com.watea.creditservice.pungueado.ProductionSetupDao;
 import com.watea.creditservice.pungueado.Service;
 import com.watea.creditservice.pungueado.SetupDao;
 import com.watea.creditservice.pungueado.WsaaManager;
+import com.watea.creditservice.watea.agip.CMSDataGenerator;
 import com.watea.creditservice.watea.agip.WSLoginManager;
 
 import ar.com.system.afip.wsaa.business.api.XmlConverter;
@@ -74,6 +76,37 @@ public class AfipLoginTest {
 			WSLoginManager loginManager = new WSLoginManager(certPath, certPass, cuit, destination);
 			String service = "wsfecred";
 			loginManager.getCredential(service);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void loginPurgado(){
+		setBasePathDesdeCasa(false);
+
+		try {
+			//el "crt" es un DER
+			String certPath = basePath + "watea.crt";
+			//y el "der" (la key) no es un DER
+			String certPass = basePath + "watea-key.der";
+			String cuit = "30710037767";
+			String destination = "CN=wsaa, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239";
+			String service = "wsfecred";
+
+			String cmsData = new String(
+					Base64.encodeBase64(
+							new CMSDataGenerator(
+									certPath,
+									certPass,
+									cuit,
+									destination,
+									service).getCMSData()));
+
+			LoginCMS login = new LoginCMSService().getLoginCms();
+			String response = login.loginCms(cmsData);
+
+			System.out.println(response);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
