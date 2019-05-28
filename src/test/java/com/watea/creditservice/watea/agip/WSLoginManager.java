@@ -8,6 +8,9 @@ package com.watea.creditservice.watea.agip;
 import ar.gov.agip.cc.controller.soap.LoginTicketResponse;
 import ar.gov.agip.cc.controller.soap.LoginWS;
 import ar.gov.agip.cc.controller.soap.Webservice_002fLoginWS;
+import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMS;
+import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMSService;
+
 import com.watea.creditservice.watea.agip.test.AGIPTestService;
 import org.apache.tomcat.util.codec.binary.Base64;
 
@@ -109,7 +112,7 @@ public class WSLoginManager // extends Thread
      * @since 1.0
      *
      */
-    protected Credential getNewCredential(String servicename) throws Exception {
+    public Credential getNewCredential(String servicename) throws Exception {
         log.entering(this.getClass().getName(), "getNewCredential");
         try {
             // Obtengo el CMSDataGenerator del correspondiente servicio
@@ -137,8 +140,9 @@ public class WSLoginManager // extends Thread
 
             case "PROD" : {
                 // Invoco el webservice
-                LoginWS login = new Webservice_002fLoginWS().getLoginWSPort();
-                return login.getLoginTicketFromCMS(cms);
+                LoginCMS login = new LoginCMSService().getLoginCms();
+                String loginTicket = login.loginCms(cms);
+                return null;
             }
             case "TEST": {
                 // Invoco el webservice
