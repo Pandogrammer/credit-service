@@ -1,88 +1,30 @@
 package com.watea.creditservice;
 
-import java.io.Serializable;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
-import com.watea.creditservice.pungueado.ProductionSetupDao;
-import com.watea.creditservice.pungueado.Service;
-import com.watea.creditservice.pungueado.SetupDao;
-import com.watea.creditservice.pungueado.WsaaManager;
-import com.watea.creditservice.watea.agip.CMSDataGenerator;
-import com.watea.creditservice.watea.agip.WSLoginManager;
+import com.watea.creditservice.pungueado.CMSDataGenerator;
 
-import ar.com.system.afip.wsaa.business.api.XmlConverter;
-import ar.com.system.afip.wsaa.data.api.CompanyInfo;
-import ar.com.system.afip.wsaa.data.api.TaxCategory;
-import ar.com.system.afip.wsaa.data.api.WsaaDao;
-import ar.com.system.afip.wsaa.data.impl.InMemoryWsaaDao;
 import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMS;
 import https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMSService;
+import wsfecred.afip.gob.ar.fecredservice.AuthRequestType;
+import wsfecred.afip.gob.ar.fecredservice.ConsultarComprobanteRequestType;
+import wsfecred.afip.gob.ar.fecredservice.FECredService;
+import wsfecred.afip.gob.ar.fecredservice.FECredServicePortType;
 
 public class AfipLoginTest {
 
 	String basePath;
-	private String exampleXml = "<?xml version=\"1.0\" encoding=\"UTF\u00AD8\"?>" + "<loginTicketRequest version=\"1.0\">  " + "<header>"
-			+ "<source>cn=srv1,ou=facturacion,o=empresa s.a.,c=ar,serialNumber=CUIT 30123456789</source>"
-			+ "<destination>cn=wsaa,o=afip,c=ar,serialNumber=CUIT 33693450239</destination>" + "<uniqueId>4325399</uniqueId>    "
-			+ "<generationTime>2001\u00AD12\u00AD31T12:00:00\u00AD03:00</generationTime>"
-			+ "<expirationTime>2001\u00AD12\u00AD31T12:10:00\u00AD03:00</expirationTime>" + "</header>" + "<service>wsfe</service>"
-			+ "</loginTicketRequest>";
 
 	@Test
-	public void loginTicketRequestXML() {
-//		generateXML()
-	}
-
-	@Test
-	public void build_keys() {
-		buildKeys();
-
-	}
-
-	@Test
-	public void loginLibreriaExterna() {
-		SetupDao setupDao = new ProductionSetupDao(Service.WSFECRED);
-		WsaaDao daoWsaa = new InMemoryWsaaDao();
-		LoginCMS loginCms = new LoginCMSService().getLoginCms();
-		XmlConverter xmlConverter = getXmlConverter();
-
-		WsaaManager wsaaManager = new WsaaManager(daoWsaa, setupDao, loginCms, xmlConverter);
-
-		daoWsaa.saveCompanyInfo(getCompanyInfo());
-
-		wsaaManager.initializeKeys();
-		wsaaManager.updateCertificate(getCertificate());
-		wsaaManager.login(Service.WSFECRED);
-
-	}
-
-	@Test
-	public void loginWatea(){
-		setBasePathDesdeCasa(false);
-
-		try {
-			//el "crt" es un DER
-			String certPath = basePath + "watea.crt";
-			//y el "der" (la key) no es un DER
-			String certPass = basePath + "watea-key.der";
-			String cuit = "30710037767";
-			String destination = "CN=wsaa, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239";
-			WSLoginManager loginManager = new WSLoginManager(certPath, certPass, cuit, destination);
-			String service = "wsfecred";
-			loginManager.getCredential(service);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void loginPurgado(){
+	public void loginPurgado() {
 		setBasePathDesdeCasa(false);
 
 		try {
@@ -94,92 +36,59 @@ public class AfipLoginTest {
 			String destination = "CN=wsaa, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239";
 			String service = "wsfecred";
 
-			String cmsData = new String(
-					Base64.encodeBase64(
-							new CMSDataGenerator(
-									certPath,
-									certPass,
-									cuit,
-									destination,
-									service).getCMSData()));
+			String cmsData = new String(Base64.encodeBase64(new CMSDataGenerator(certPath, certPass, cuit, destination, service).getCMSData()));
 
 			LoginCMS login = new LoginCMSService().getLoginCms();
 			String response = login.loginCms(cmsData);
 
-			System.out.println(response);
+			response = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + "<loginTicketResponse version=\"1\">" + "    <header>"
+					+ "        <source>CN=wsaa, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239</source>"
+					+ "        <destination>SERIALNUMBER=CUIT 30710037767, CN=watea_2019</destination>"
+					+ "        <uniqueId>3228106662</uniqueId>" + "        <generationTime>2019-05-29T14:08:16.957-03:00</generationTime>"
+					+ "        <expirationTime>2019-05-30T02:08:16.957-03:00</expirationTime>" + "    </header>" + "    <credentials>"
+					+ "        <token>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8c3NvIHZlcnNpb249IjIuMCI+CiAgICA8aWQgc3JjPSJDTj13c2FhLCBPPUFGSVAsIEM9QVIsIFNFUklBTE5VTUJFUj1DVUlUIDMzNjkzNDUwMjM5IiB1bmlxdWVfaWQ9IjM2MDA5NDg5MjkiIGdlbl90aW1lPSIxNTU5MTQ5NjM2IiBleHBfdGltZT0iMTU1OTE5Mjg5NiIvPgogICAgPG9wZXJhdGlvbiB0eXBlPSJsb2dpbiIgdmFsdWU9ImdyYW50ZWQiPgogICAgICAgIDxsb2dpbiBlbnRpdHk9IjMzNjkzNDUwMjM5IiBzZXJ2aWNlPSJ3c2ZlY3JlZCIgdWlkPSJTRVJJQUxOVU1CRVI9Q1VJVCAzMDcxMDAzNzc2NywgQ049d2F0ZWFfMjAxOSIgYXV0aG1ldGhvZD0iY21zIiByZWdtZXRob2Q9IjIyIj4KICAgICAgICAgICAgPHJlbGF0aW9ucz4KICAgICAgICAgICAgICAgIDxyZWxhdGlvbiBrZXk9IjMwNzEwMDM3NzY3IiByZWx0eXBlPSI0Ii8+CiAgICAgICAgICAgIDwvcmVsYXRpb25zPgogICAgICAgIDwvbG9naW4+CiAgICA8L29wZXJhdGlvbj4KPC9zc28+Cg==</token>"
+					+ "        <sign>tthyiM1DE+ybY/Ll2d7otFPewPYxajlATudzyatDgBqM12neoa2HTIOg364QGgn2KorBw4pw8MXNoBxEh50hcs3/q6DY3gHwHCvVllUO4YmXLHo3g+oCgy4JYulI5R2fZAdQN08qN/dNsB1zgPaxp3p/x0UUadtrWGIa9WRetPM=</sign>"
+					+ "    </credentials>" + "</loginTicketResponse>";
+
+			Document xmlResponse = convertStringToXMLDocument(response);
+
+			AuthRequestType authRequest = new AuthRequestType();
+			authRequest.setCuitRepresentada(Long.valueOf(cuit));
+
+			FECredServicePortType feCredService = new FECredService().getFECredServiceSOAP();
+			ConsultarComprobanteRequestType request = new ConsultarComprobanteRequestType();
+			request.setAuthRequest(authRequest);
+			feCredService.consultarComprobantes(request).getConsultarCmpReturn();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void setBasePathDesdeCasa(boolean desdeCasa) {
-		if(desdeCasa) basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\";
-		else basePath = "/Users/Fernando/fer/credit-service/src/test/resources/";
-	}
+	private Document convertStringToXMLDocument(String xmlString) {
+		//Parser that produces DOM object trees from XML content
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-	private CompanyInfo getCompanyInfo() {
-		Serializable id = 1;
-		String name = "Watea";
-		boolean active = true;
-		String unit = "";
-		String cuit = "20239686673";
-		String publicKey = null; //null
-		String privateKey = null; //null
-		String certificate = null; //null
-		String grossIncome = "";
-		Date activityStartDate = new Date();
-		TaxCategory taxCategory = TaxCategory.RESPONSABLE_INSCRIPTO;
-		String address = null; //null
-		String location = null; //null
-		String alias = "Watea";
-		return new CompanyInfo(id, name, active, unit, cuit, publicKey, privateKey,
-				certificate, grossIncome, activityStartDate, taxCategory, address, location, alias);
-	}
-
-
-
-	private String getCertificate() {
-		return "-----BEGIN CERTIFICATE-----\n" + "MIIDSzCCAjOgAwIBAgIIZIPy3wtgW0cwDQYJKoZIhvcNAQENBQAwODEaMBgGA1UEAwwRQ29tcHV0\n"
-				+ "YWRvcmVzIFRlc3QxDTALBgNVBAoMBEFGSVAxCzAJBgNVBAYTAkFSMB4XDTE5MDUwNzExNTM0NVoX\n"
-				+ "DTIxMDUwNjExNTM0NVowMTEUMBIGA1UEAwwLV2F0ZWFGRUNSRUQxGTAXBgNVBAUTEENVSVQgMjAy\n"
-				+ "Mzk2ODY2NzMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCtfrFC/4YOkO1W6vYeCs1C\n"
-				+ "PfIwntm0opCkxI8/MfDZ9JxZ3UE1AvRQ+cqBBhHWzRFTvY2IIxunTPtryqiTvcrrTQ9+GQYbJdOB\n"
-				+ "+kiWqhIE2dLNbgTwh4Coi1lGAjVPmaJjpEiUI0IAK3ptlTCOpL9kfzFFJVLI1nDaUCKjSbJn/ykF\n"
-				+ "lKttfFcF8MD09/URASYQpEyC82m2M+2C7d1xsHUkg8W/ado8yMASTmHQ75BG4ygSp0IDFPWoqDJr\n"
-				+ "WNph7Xy6XKCGGfjk4rlAUfoEZEw+UFONulLFtyMVj2oXxqfRIptU2lY0uD7XvtPqMXFWHToBfH18\n"
-				+ "tYZ9cxHY6KiqYbg7AgMBAAGjYDBeMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUs7LT//3put7e\n"
-				+ "ja8RIZzWIH3yT28wHQYDVR0OBBYEFIYD3UGXXOqHHahk6/jEuO2FqQRzMA4GA1UdDwEB/wQEAwIF\n"
-				+ "4DANBgkqhkiG9w0BAQ0FAAOCAQEAMpLJYybrM1iA5dxKN4z4cJR7jiFm8P0Y0Ya31xjJnXYmWueZ\n"
-				+ "qtjris1mLRFkSF677c5azNfzRM/YXGmF7d1KbKnNFFAkUGvJ6UVWwL9xdLanu4A1/ZXOVaqzwyEm\n"
-				+ "aYc9WI9bJ9owMj87GNAz6/z0q/kan97yLC6UwwKeNJWmk5U2iZ6VJ7SHgxiIjRI1WTxVkq8Apvfl\n"
-				+ "NZsguyQ8/UePKpkgk97fpjEoEITv1Kw5BObuMCOK7qxXlE2fuIEWPjcVOLelwMw3/qNQSqLPJi7h\n"
-				+ "5ju1MweBMPIPKE+3H6RtvEbsdvpB0Xu0+Y4Zq1NJ8DlIp80zMiectjl7dKA/74NQsA==\n" + "-----END CERTIFICATE-----";
-	}
-
-	private XmlConverter getXmlConverter() {
-		return new XmlConverter() {
-			@Override
-			public String toXml(Object data) {
-				return exampleXml;
-			}
-
-			@Override
-			public <T> T fromXml(Class<T> clazz, String data) {
-				return null;
-			}
-		};
-	}
-
-	private static KeyPair buildKeys() {
+		//API to obtain DOM Document instance
+		DocumentBuilder builder = null;
 		try {
-			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-			keyGen.initialize(2048);
-			return keyGen.genKeyPair();
-		} catch (NoSuchAlgorithmException e) {
+			//Create DocumentBuilder with default configuration
+			builder = factory.newDocumentBuilder();
+
+			//Parse the content to Document object
+			Document doc = builder.parse(new InputSource(new StringReader(xmlString)));
+			return doc;
+		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+		}
+		return null;
+	}
+
+	private void setBasePathDesdeCasa(boolean desdeCasa) {
+		if (desdeCasa) {
+			basePath = "C:\\Users\\Farguito\\Desktop\\credit-service\\src\\test\\resources\\";
+		} else {
+			basePath = "/Users/Fernando/fer/credit-service/src/test/resources/";
 		}
 	}
-
 
 }
